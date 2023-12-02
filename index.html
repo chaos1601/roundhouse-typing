@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html dir = ltr lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="author" content="Dale Ruppert">
+        <meta name="description" content="Dale Ruppert: Web Developer">
+        <meta name="keywords" content="web developer, web, developer, front-end, html, css, javascript, react, sql">
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300&family=PT+Sans&display=swap" rel="stylesheet">
+        <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+        <title>Roundhouse Typing</title>
+        <link rel="stylesheet" href="./assets/style/index.css" media="all">
+        <script src="./assets/script/app.js" type="module"></script>
+    </head>
+    <body>
+        <div class="container">
+            <section class="info">
+                <h1>Roundhouse Typing</h1>
+                <p>Time: <span class="timer">99</span> sec</p>
+                <p>Score: <span class="score">0</span></p>
+            </section>
+            <main>
+                <div class="game">
+                    <input type="text" class="wordInput" placeholder="Type the word...">
+                    <button class="startButton">Start</button>
+                    <button class="restartButton">Restart</button>
+                </div>
+                <div>
+                    <p class="currentWord"></p>
+                </div>
+            </main>
+            <audio class="bgMusic" autoplay loop>
+                <source src="./assets/Audio/Girls und Panzer Säkkijärven Polkka.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+    </body>
+</html>
