@@ -96,7 +96,7 @@ function displayTimeUpMessage() {
   document.querySelector('.game').appendChild(messageElement);
 }
 
-// function to udate the timer
+// function to update the timer
 function updateTimer() {
   if (timeRemaining > 0) {
     timeRemaining--;
@@ -168,33 +168,4 @@ restartButton.addEventListener('click', function () {
 });
 
 let volume = music.volume; // Initial volume set to the audio element's volume
-music.volume = 0.5;
-
-// Function to increase the volume
-function increaseVolume() {
-  if (volume < 1) {
-    volume += 0.1; // Increase volume by 0.1 (can adjust this value)
-    music.volume = volume;
-  }
-}
-
-// Function to decrease the volume
-function decreaseVolume() {
-  if (volume > 0) {
-    volume -= 0.1; // Decrease volume by 0.1 (can adjust this value)
-    music.volume = volume;
-  }
-}
-
-// Event listener for keyboard controls
-document.addEventListener('keydown', function (event) {
-  // Increase volume when the 'Up' arrow key is pressed
-  if (event.key === 'ArrowUp') {
-    increaseVolume();
-  }
-
-  // Decrease volume when the 'Down' arrow key is pressed
-  if (event.key === 'ArrowDown') {
-    decreaseVolume();
-  }
-});
+volume = 0.5;
