@@ -64,7 +64,6 @@ function startGame() {
   wordInput.disabled = false;
   restartButton.style.display = 'inline-block';
   startButton.style.display = 'none';
-  displayWord();
 }
 
 // Function to display the current word
@@ -110,7 +109,6 @@ function updateTimer() {
 
 // Function to handle user input
 wordInput.addEventListener('input', function (userValue) {
-  console.log('Input event triggered');
   const typedWord = userValue.target.value.trim().toLowerCase();
   const currentWord = words[currentWordIndex];
 
@@ -131,9 +129,8 @@ function endGame() {
   // Calculate score percentage
   let percentage = ((score / words.length) * 100).toFixed(2);
 
-  const currentDate = new Date();
+  const currentDate = new Date(0, 0, 0);
   const currentScore = new Score(currentDate, score, percentage);
-  console.log(currentScore); // Add this line to check the currentScore value
 
   // Get the high score from storage
   const storedHighScore = getHighScore();
@@ -145,24 +142,11 @@ function endGame() {
   wordInput.value = '';
 }
 
-function startGameWithDelay(delay) {
-  setTimeout(() => {
-    startGame();
-  }, delay);
-}
-
-function resetGameWithDelay(delay) {
-  setTimeout(() => {
-    resetGame();
-  }, delay);
-}
-
 // Event listener for the start button
 startButton.addEventListener('click', function () {
   wordInput.focus();
   startGame();
   startButton.innerText = 'Restart';
-  startGameWithDelay(2000);
   // Play background music
   music.play();
 });
@@ -173,7 +157,6 @@ function resetGame() {
   score = 0;
   currentWordIndex = 0;
   wordInput.focus();
-  displayWord();
   updateScore();
   timer = setInterval(updateTimer, 1000);
   wordInput.disabled = false; // Enable the input field
@@ -185,7 +168,6 @@ function resetGame() {
 
 // Event listener for the start button
 startButton.addEventListener('click', function () {
-  startGameWithDelay(2000);
   wordInput.focus();
   startGame();
   displayWord(); // Display the first word when the game starts
@@ -195,7 +177,6 @@ startButton.addEventListener('click', function () {
 // Event listener for the restart button
 restartButton.addEventListener('click', function () {
   timeRemaining = 16;
-  resetGameWithDelay(2000);
   wordInput.focus();
   resetGame();
   removeMessage();
@@ -218,8 +199,8 @@ scoreButton.addEventListener('click', () => {
   dialog.showModal();
   const storedHighScore = getHighScore();
 
-  if (storedHighScore) {
-    highScore.innerText = `Score: ${storedHighScore.hits}, Date: ${storedHighScore.date}, Percentage: ${storedHighScore.percentage}%`;
+  if (storedHighScore.length > 0) {
+    highScore.innerText = `Date: ${storedHighScore.date}, Score: ${storedHighScore.hits}, Percentage: ${storedHighScore.percentage}%`;
   } else {
     highScore.innerText = 'No high score available yet.';
   }
