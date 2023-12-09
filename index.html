@@ -13,11 +13,13 @@
         <script src="./assets/script/app.js" type="module"></script>
     </head>
     <body>
+        <header>
+            <h1>Roundhouse Typing</h1>
+            <p>Score: <span class="score">0</span></p>
+        </header>
         <div class="container">
             <section class="info">
-                <h1>Roundhouse Typing</h1>
-                <p>Time: <span class="timer">99</span> sec</p>
-                <p>Score: <span class="score">0</span></p>
+                <p><span class="timer">16</span></p>
             </section>
             <main>
                 <div>
@@ -28,7 +30,14 @@
                     <button class="startButton">Start</button>
                     <button class="restartButton">Restart</button>
                 </div>
+                <div class="scoreButton">
+                    <button>Score</button>
+                </div>
             </main>
+            <dialog>
+                <h2>High Score</h2>
+                <p class="highScore"></p>
+            </dialog>
             <audio class="bgMusic" autoplay loop>
                 <source src="./assets/Audio/Girls und Panzer Säkkijärven Polkka.mp3" type="audio/mpeg">
                 Your browser does not support the audio element.

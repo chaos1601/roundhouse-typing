@@ -21,8 +21,17 @@
     --app-blue-hover: #364ee6;
 }
 
+header {
+    width: 100%;
+    height: auto;
+}
+
+h1 {
+    padding-top: 10px;
+}
+
 body {
-    background: #000 url(../img/background.avif) center center / cover no-repeat fixed; 
+    background: #000 url(../img/dojo.webp) center center / cover no-repeat fixed; 
     font-family: 'Fira Sans', Arial, Helvetica, sans-serif;
     justify-content: center;
     align-items: center;
@@ -37,7 +46,7 @@ body {
 
 .info {
     position: absolute;
-    top: 50%;
+    top: 35%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
@@ -72,12 +81,16 @@ p, h1 {
     color: var(--app-white);
 }
 
+.timer {
+    font-size: 130px;
+}
+
 .currentWord {
     font-size: 24px;
     margin-top: 20px;
     position: absolute;
-    top: 69%;
-    left: 49%;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
 }
@@ -94,5 +107,53 @@ p, h1 {
 }
 
 .game p {
-    margin: 12px;
+    position: absolute;
+    top: 116%;
+    width: 200px;
+}
+
+.scoreButton {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: 0 0 10px 10px;
+}
+
+dialog {
+    margin: auto;
+    width: 310px;
+    padding: 19px 25px 24px 25px;
+    border-style: none;
+    border-radius: 5px;
+    box-shadow: rgb(0, 0, 0 / 0.2);
+    animation: 0.2s linear anim;
+}
+
+@keyframes anim {
+    from {
+        opacity: 0;
+        translate: 0 -6px;
+    } to {
+        opacity: 1;
+        translate: 0 0;
+    }
+}
+
+dialog::backdrop {
+    background-color: rgb(0 0 0 / 0.3);
+    backdrop-filter: blur(5px);
+}
+
+dialog h2 {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+}
+
+dialog p {
+    color: var(--app-dark-bg);
+    margin-top: 10px;
+    font-size: 18px;
+    line-height: 1.4;
+    font-weight: 400;
 }

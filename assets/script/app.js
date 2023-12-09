@@ -1,6 +1,6 @@
 'use strict';
 
-import { Score } from "./Game.js";
+import { Score } from "./Score.js";
 
 const currentWordElement = document.querySelector('.currentWord');
 const scoreElement = document.querySelector('.score');
@@ -9,6 +9,9 @@ const wordInput = document.querySelector('.wordInput');
 const music = document.querySelector('.bgMusic');
 const startButton = document.querySelector('.startButton');
 const restartButton = document.querySelector('.restartButton');
+const scoreButton = document.querySelector('.scoreButton');
+const dialog = document.querySelector('dialog');
+const highScore = document.querySelector('.highScore');
 
 
 const words = [
@@ -32,10 +35,12 @@ const words = [
     'rebel', 'amber', 'jacket', 'article', 'paradox', 'social', 'resort', 'escape'
 ];
 
-let timeRemaining = 99;
+let timeRemaining = 16;
 let score = 0;
 let timer;
 let currentWordIndex;
+wordInput.disabled = true;
+let messageElement;
 
 let shuffledWords = [...words];
 
@@ -49,37 +54,26 @@ function shuffleWordsArray() {
 // Function to start/restart the game
 function startGame() {
   clearInterval(timer);
-  timeRemaining = 99;
+  timeRemaining = 16;
   score = 0;
   currentWordIndex = 0;
-  displayWord();
   updateScore();
   timer = setInterval(updateTimer, 1000);
-  wordInput.disabled = false; // Enable the input field
+
+  // Disable the input field initially
+  wordInput.disabled = false;
   restartButton.style.display = 'inline-block';
   startButton.style.display = 'none';
+  displayWord();
 }
 
 // Function to display the current word
 function displayWord() {
-  const remainingWords = words.filter((word, index) => index !== currentWordIndex);
+  const remainingWords = shuffledWords.filter((word, index) => index !== currentWordIndex);
   const randomIndex = Math.floor(Math.random() * remainingWords.length);
   currentWordElement.innerText = remainingWords[randomIndex];
-  currentWordIndex = words.indexOf(remainingWords[randomIndex]); // Update currentWordIndex for scoring purposes
+  currentWordIndex = shuffledWords.indexOf(remainingWords[randomIndex]); // Update currentWordIndex for scoring purposes
 }
-
-// function displayWord() {
-//   if (shuffledWords.length === 0) {
-//     shuffledWords = [...words]; // Reset the shuffledWords array when all words have been displayed
-//   }
-
-//   const randomIndex = Math.floor(Math.random() * shuffledWords.length);
-//   currentWordElement.innerText = shuffledWords[randomIndex];
-//   currentWordIndex = shuffledWords.indexOf(shuffledWords[randomIndex]); // Update currentWordIndex for scoring purposes
-
-//   // Remove the displayed word from the array
-//   shuffledWords.splice(randomIndex, 1);
-// }
 
 // Function to update the score
 function updateScore() {
@@ -91,9 +85,15 @@ function displayTimeUpMessage() {
   currentWordElement.innerText = "Time's up!";
   wordInput.disabled = true; // Disable input field after time's up
   // Add your message display logic here
-  const messageElement = document.createElement('p');
+  messageElement = document.createElement('p');
   messageElement.innerText = (`Your time has ended. You got a total score of ${score}.`);
   document.querySelector('.game').appendChild(messageElement);
+}
+
+function removeMessage() {
+  if (messageElement) {
+    messageElement.remove();
+  }
 }
 
 // function to update the timer
@@ -109,8 +109,9 @@ function updateTimer() {
 }
 
 // Function to handle user input
-wordInput.addEventListener('input', function (e) {
-  const typedWord = e.target.value.trim().toLowerCase();
+wordInput.addEventListener('input', function (userValue) {
+  console.log('Input event triggered');
+  const typedWord = userValue.target.value.trim().toLowerCase();
   const currentWord = words[currentWordIndex];
 
   if (typedWord === currentWord) {
@@ -118,7 +119,7 @@ wordInput.addEventListener('input', function (e) {
     currentWordIndex++;
     displayWord();
     updateScore();
-    e.target.value = '';
+    userValue.target.value = '';
   }
 });
 
@@ -128,44 +129,106 @@ function endGame() {
   music.pause();
 
   // Calculate score percentage
-  const percentage = ((score / words.length) * 100).toFixed(2);
+  let percentage = ((score / words.length) * 100).toFixed(2);
 
   const currentDate = new Date();
   const currentScore = new Score(currentDate, score, percentage);
+  console.log(currentScore); // Add this line to check the currentScore value
+
+  // Get the high score from storage
+  const storedHighScore = getHighScore();
+
+  if (!storedHighScore || score > storedHighScore.hits) {
+    localStorage.setItem('highScore', JSON.stringify(currentScore));
+  }
+
+  wordInput.value = '';
+}
+
+function startGameWithDelay(delay) {
+  setTimeout(() => {
+    startGame();
+  }, delay);
+}
+
+function resetGameWithDelay(delay) {
+  setTimeout(() => {
+    resetGame();
+  }, delay);
 }
 
 // Event listener for the start button
 startButton.addEventListener('click', function () {
+  wordInput.focus();
   startGame();
   startButton.innerText = 'Restart';
+  startGameWithDelay(2000);
   // Play background music
   music.play();
 });
 
 function resetGame() {
   clearInterval(timer);
-  timeRemaining = 99;
+  timeRemaining = 16;
   score = 0;
   currentWordIndex = 0;
+  wordInput.focus();
   displayWord();
   updateScore();
   timer = setInterval(updateTimer, 1000);
   wordInput.disabled = false; // Enable the input field
-
   music.currentTime = 0; // Reset the music to the beginning
   music.play();
+
+  wordInput.value = '';
 }
 
 // Event listener for the start button
 startButton.addEventListener('click', function () {
+  startGameWithDelay(2000);
+  wordInput.focus();
   startGame();
+  displayWord(); // Display the first word when the game starts
   music.play(); // Play background music
 });
 
 // Event listener for the restart button
 restartButton.addEventListener('click', function () {
+  timeRemaining = 16;
+  resetGameWithDelay(2000);
+  wordInput.focus();
   resetGame();
+  removeMessage();
 });
 
 let volume = music.volume; // Initial volume set to the audio element's volume
 volume = 0.5;
+
+scoreButton.addEventListener('click', () => {
+  dialog.showModal();
+});
+
+// Function to get the high score from localStorage
+function getHighScore() {
+  const storedScore = localStorage.getItem('highScore');
+  return storedScore ? JSON.parse(storedScore) : null;
+}
+
+scoreButton.addEventListener('click', () => {
+  dialog.showModal();
+  const storedHighScore = getHighScore();
+
+  if (storedHighScore) {
+    highScore.innerText = `Score: ${storedHighScore.hits}, Date: ${storedHighScore.date}, Percentage: ${storedHighScore.percentage}%`;
+  } else {
+    highScore.innerText = 'No high score available yet.';
+  }
+});
+
+dialog.addEventListener('click', function(event) {
+  const rect = this.getBoundingClientRect();
+
+  if (event.clientY < rect.top || event.clientY > rect.bottom || event.clientX < rect.left || event.clientX > rect.right) {
+      dialog.close();
+  }
+});
