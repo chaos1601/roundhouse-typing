@@ -41,6 +41,8 @@ let timer;
 let currentWordIndex;
 wordInput.disabled = true;
 let messageElement;
+let highScores = [];
+let percentage = ((score / words.length) * 100).toFixed(2);
 
 let shuffledWords = [...words];
 
@@ -53,6 +55,7 @@ function shuffleWordsArray() {
 
 // Function to start/restart the game
 function startGame() {
+  wordInput.value = '';
   clearInterval(timer);
   timeRemaining = 16;
   score = 0;
@@ -126,18 +129,12 @@ function endGame() {
   // Stop background music
   music.pause();
 
-  // Calculate score percentage
-  let percentage = ((score / words.length) * 100).toFixed(2);
-
-  const currentDate = new Date(0, 0, 0);
+  const currentDate = new Date();
   const currentScore = new Score(currentDate, score, percentage);
 
-  // Get the high score from storage
-  const storedHighScore = getHighScore();
-
-  if (!storedHighScore || score > storedHighScore.hits) {
-    localStorage.setItem('highScore', JSON.stringify(currentScore));
-  }
+  updateHighScores(currentScore);
+  saveHighScores();
+  displayHighScores();
 
   wordInput.value = '';
 }
@@ -179,6 +176,7 @@ restartButton.addEventListener('click', function () {
   timeRemaining = 16;
   wordInput.focus();
   resetGame();
+  displayWord();
   removeMessage();
 });
 
@@ -189,22 +187,40 @@ scoreButton.addEventListener('click', () => {
   dialog.showModal();
 });
 
-// Function to get the high score from localStorage
-function getHighScore() {
-  const storedScore = localStorage.getItem('highScore');
-  return storedScore ? JSON.parse(storedScore) : null;
+function saveHighScores() {
+  localStorage.setItem('highScores', JSON.stringify(highScores));
 }
 
-scoreButton.addEventListener('click', () => {
-  dialog.showModal();
-  const storedHighScore = getHighScore();
+// Function to get the high score from localStorage
+function getHighScores() {
+  const storedScores = localStorage.getItem('highScores');
+  return storedScores ? JSON.parse(storedScores) : [];
+}
 
-  if (storedHighScore.length > 0) {
-    highScore.innerText = `Date: ${storedHighScore.date}, Score: ${storedHighScore.hits}, Percentage: ${storedHighScore.percentage}%`;
+function updateHighScores(scoreObject) {
+  const currentDate = new Date();
+  const currentScore = new Score(currentDate, score, percentage);
+  highScores.push(currentScore);
+  // Sort high scores in descending order based on hits (score)
+  highScores.sort((a, b) => b.hits - a.hits);
+  // Keep only the top 10 high scores
+  highScores = highScores.slice(0, 10);
+}
+
+function displayHighScores() {
+  const storedHighScores = getHighScores();
+
+  if (storedHighScores && storedHighScores.length > 0) {
+    let highScoreText = '';
+    storedHighScores.forEach((score, index) => {
+      const formattedDate = score.date ? score.date.toLocaleDateString() : 'N/A'; // Check if date is defined
+      highScoreText += `#${index + 1} Date: ${formattedDate}, Score: ${score.hits}, Percentage: ${score.percentage}%\n`;
+    });
+    highScore.innerText = highScoreText;
   } else {
-    highScore.innerText = 'No high score available yet.';
+    highScore.innerText = 'No high scores available yet.';
   }
-});
+}
 
 dialog.addEventListener('click', function(event) {
   const rect = this.getBoundingClientRect();
